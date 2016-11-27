@@ -1,6 +1,6 @@
 zc wechat
 =========
-Yii2 wechat
+Yii2 wechat  for starter kit
 
 Installation
 ------------
@@ -25,7 +25,46 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-Once the extension is installed, simply use it in your code by  :
+ *  前台
+```
+<?php
+    ......
+    'modules' => [
+        'wechat' => [
+            'class' => 'zc\wechat\front\Module',
+        ],
+    ],
+    ......
 
-```php
-<?= \zc\wechat\AutoloadExample::widget(); ?>```
+```
+微信请求URL:
+ * 后台
+ ```
+ <?php
+     ......
+     'modules' => [
+         'wechat' => [
+             'class' => 'zc\wechat\admin\Module',
+         ],
+     ],
+     ......
+ 
+ ``` 
+ * 后台设置微信对接信息 [http://backend.example.com/wechat/wechat]()
+ * 微信公众后台设置请求URL为：http://fronted.example.com/wechat/{wechatId} `wechatId 管理后台wechat表ID`
+ * 前台设置微信对接URL路由规则：
+ > 
+ ```
+ //wechat
+         ['pattern'=>'wechat/<id:\d+>', 'route'=>'wechat'],
+ ```
+ >id为数据库微信ID
+ 
+
+
+注意事项
+---------
+* for starter kit
+* 使用`overtrue/wechat ` [参考文档](https://easywechat.org)
+
+
