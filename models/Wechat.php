@@ -4,6 +4,7 @@ namespace zc\wechat\models;
 
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use EasyWeChat\Foundation\Application;
 /**
  * "wechat"表的model
  *
@@ -232,4 +233,30 @@ class Wechat extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * 获得启用的所有微信公众号信息
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    static public function getOnWechats(){
+        return self::find()->where(['status_d'=>'1'])->all();
+    }
+
+    /**
+     * 获取微信实例
+     * @param $id
+     * @return \EasyWeChat\Foundation\Application
+     */
+    static public function getApplication($id){
+        $wechat = self::find()->where(['id'=>$id])->one();
+
+
+
+        $options['app_id'] = $wechat->appID;
+        $options['secret'] = $wechat->secret;
+        $options['token'] = $wechat->token;
+        $options['aes_key'] = $wechat->encoding_aes_key;
+
+        return  new Application($options);
+
+    }
 }

@@ -8,9 +8,10 @@ use yii\behaviors\TimestampBehavior;
  * "wx_response_key_value"表的model
  *
  * @property integer $id
+ * @property integer $wechat_id
  * @property integer $keyword_id
  * @property integer $reply_id
- * @property string $created_at
+ * @property integer  $created_at
  */
 class ResponseKeyValue extends \yii\db\ActiveRecord
 {
@@ -29,8 +30,8 @@ class ResponseKeyValue extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['keyword_id', 'reply_id'], 'required'],
-            [['keyword_id', 'reply_id'], 'integer'],
+            [['wechat_id','keyword_id', 'reply_id'], 'required'],
+            [['wechat_id','keyword_id', 'reply_id'], 'integer'],
             [['created_at'], 'safe']
         ];
     }
@@ -57,6 +58,7 @@ class ResponseKeyValue extends \yii\db\ActiveRecord
     {
         return [
             'id',// 'ID',
+            'wechat_id',// '微信公众号ID（数据库）',
             'keyword_id',// 'Keyword ID',
             'reply_id',// 'Reply ID',
             'created_at',// 'Created At',
@@ -70,6 +72,7 @@ class ResponseKeyValue extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'wechat_id' => '微信公众号ID（数据库）',
             'keyword_id' => 'Keyword ID',
             'reply_id' => 'Reply ID',
             'created_at' => 'Created At',
@@ -105,6 +108,15 @@ class ResponseKeyValue extends \yii\db\ActiveRecord
         $options = $this->options;
         return [
             ];
+    }
+    /**
+     * 获取微信号
+     * 取的时候使用
+     * $wechat = models\Wechat::findOne(1);
+     * $wechatName = $wechat->name;
+     */
+    public function getWechat(){
+        return $this->hasOne(Wechat::className(),['id'=>'wechat_id']);//->asArray();
     }
     /**
      * 获取关键词

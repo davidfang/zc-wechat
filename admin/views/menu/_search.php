@@ -22,19 +22,21 @@ use zc\gii\bs3activeform\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
+    <?= $form->field($model, 'wechat_id') ?>
+
     <?= $form->field($model, 'pid') ?>
 
     <?= $form->field($model, 'name') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?= $form->field($model, 'type')->dropDownList($model->options['type'], ['prompt' => '请选择']) ?>
 
-    <?= $form->field($model, 'code') ?>
+    <?php // echo $form->field($model, 'code') ?>
+
+    <?php // echo $form->field($model, 'status')->dropDownList($model->options['status'], ['prompt' => '请选择']) ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
 
     <?php // echo $form->field($model, 'updated_at') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
 
     <div class="form-group">
         <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>

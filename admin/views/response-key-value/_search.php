@@ -22,6 +22,8 @@ use zc\gii\bs3activeform\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
+    <?= $form->field($model, 'wechat_id') ?>
+
     <?= $form->field($model, 'keyword_id') ?>
 
     <?= $form->field($model, 'reply_id') ?>

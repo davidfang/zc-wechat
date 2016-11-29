@@ -26,14 +26,18 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-       'id',
-       'keyword',
-        [
-        'attribute'=>'type',
-        'value'=>$model->options['type'][$model->type]
-        ],
+                   'id',
+                    [
+                        'attribute'=>'wechat_id',
+                        'value'=>$model->wechat->name
+                    ],
+                   'keyword',
+                    [
+                    'attribute'=>'type',
+                    'value'=>$model->options['type'][$model->type]
+                    ],
                    'priority',
-       'times',
+                    'times',
                        'created_at:datetime',
              ],
     ]) ?>

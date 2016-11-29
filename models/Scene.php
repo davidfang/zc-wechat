@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
  * "wx_scene"表的model
  *
  * @property integer $id
+ * @property integer $wechat_id
  * @property string $name
  * @property string $describtion
  * @property integer $subscribeNumber
@@ -17,6 +18,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string $Ticket
  * @property string $TicketTime
  * @property string $isCreated
+ * @property string $url
  * @property integer $created_at
  * @property integer $updated_at
  */
@@ -37,11 +39,11 @@ class Scene extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'sceneId'], 'required'],
-            [['subscribeNumber', 'expireSeconds', 'sceneId', 'created_at', 'updated_at'], 'integer'],
+            [['wechat_id', 'name', 'sceneId'], 'required'],
+            [['wechat_id', 'subscribeNumber', 'expireSeconds', 'sceneId', 'created_at', 'updated_at'], 'integer'],
             [['type', 'isCreated'], 'string'],
             [['TicketTime'], 'safe'],
-            [['name', 'describtion', 'Ticket'], 'string', 'max' => 255]
+            [['name', 'describtion', 'Ticket', 'url'], 'string', 'max' => 255]
         ];
     }
     /**
@@ -67,6 +69,7 @@ class Scene extends \yii\db\ActiveRecord
     {
         return [
             'id',// 'ID',
+            'wechat_id',// '微信公众号ID',
             'name',// '场景名称',
             'describtion',// '场景简介',
             'subscribeNumber',// '场景关注人数',
@@ -76,6 +79,7 @@ class Scene extends \yii\db\ActiveRecord
             'Ticket',// 'Ticket',
             'TicketTime',// '二维码生成时间',
             'isCreated',// '是否生成二维码',
+            'url',// '二维码地址',
             'created_at',// '建立时间',
             'updated_at',// '更新时间',
         ];
@@ -88,15 +92,17 @@ class Scene extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'wechat_id' => '微信公众号',
             'name' => '场景名称',
             'describtion' => '场景简介',
             'subscribeNumber' => '场景关注人数',
-            'type' => '类型，临时二维码类型为1，永久二维码类型为2',
-            'expireSeconds' => '过期时间，只在类型为临时二维码时有效。最大为1800秒',
+            'type' => '类型(临时1，永久2)',
+            'expireSeconds' => '过期时间(临时二维码时有效,最大1800秒)',
             'sceneId' => '场景值ID，临时二维码时为32位非0整型，永久二维码时最大值为100000（目前参数只支持1--100000)',
             'Ticket' => 'Ticket',
             'TicketTime' => '二维码生成时间',
-            'isCreated' => '是否生成二维码',
+            'isCreated' => '是否生成',
+            'url' => '二维码地址',
             'created_at' => '建立时间',
             'updated_at' => '更新时间',
         ];
@@ -108,7 +114,16 @@ class Scene extends \yii\db\ActiveRecord
      */
     public function getOptions()
     {
-          return [];
+          return [
+    'type' => [
+        1 => '临时',
+        2 => '永久',
+    ],
+    'isCreated' => [
+        1 => '生成',
+        0 => '未生成',
+    ],
+];
     }
 
     /**
@@ -130,7 +145,39 @@ class Scene extends \yii\db\ActiveRecord
         $attributeLabels = $this->attributeLabels();
         $options = $this->options;
         return [
-            ];
+                    /*[
+                'name'=>$options["type"]["1"],
+                'jsfunction'=>'changeStatus',
+                'field'=>'type',
+                'field_value'=>'1'
+                ],
+                [
+                'name'=>$options["type"]["2"],
+                'jsfunction'=>'changeStatus',
+                'field'=>'type',
+                'field_value'=>'2'
+                ],*/
+                [
+                'name'=>$options["isCreated"]["1"],
+                'jsfunction'=>'changeStatus',
+                'field'=>'isCreated',
+                'field_value'=>'1'
+                ],/*
+                [
+                'name'=>$options["isCreated"]["0"],
+                'jsfunction'=>'changeStatus',
+                'field'=>'isCreated',
+                'field_value'=>'0'
+                ],*/
+        ];
     }
-
+    /**
+     * 获取微信号
+     * 取的时候使用
+     * $wechat = models\Wechat::findOne(1);
+     * $wechatName = $wechat->name;
+     */
+    public function getWechat(){
+        return $this->hasOne(Wechat::className(),['id'=>'wechat_id']);//->asArray();
+    }
 }

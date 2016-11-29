@@ -3,7 +3,7 @@
 * Scene搜索模型
 * Created by David
 * User: David.Fang
-* Date: 2016-11-21* Time: 20:13:31*/
+* Date: 2016-11-29* Time: 14:51:19*/
 namespace zc\wechat\models;
 
 use Yii;
@@ -22,8 +22,8 @@ class SceneSearch extends Scene
     public function rules()
     {
         return [
-            [['id', 'subscribeNumber', 'expireSeconds', 'sceneId', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'describtion', 'type', 'Ticket', 'TicketTime', 'isCreated'], 'safe'],
+            [['id', 'wechat_id', 'subscribeNumber', 'expireSeconds', 'sceneId', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'describtion', 'type', 'Ticket', 'TicketTime', 'isCreated', 'url'], 'safe'],
         ];
     }
 
@@ -60,6 +60,7 @@ class SceneSearch extends Scene
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'wechat_id' => $this->wechat_id,
             'subscribeNumber' => $this->subscribeNumber,
             'expireSeconds' => $this->expireSeconds,
             'sceneId' => $this->sceneId,
@@ -72,7 +73,8 @@ class SceneSearch extends Scene
             ->andFilterWhere(['like', 'describtion', $this->describtion])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'Ticket', $this->Ticket])
-            ->andFilterWhere(['like', 'isCreated', $this->isCreated]);
+            ->andFilterWhere(['like', 'isCreated', $this->isCreated])
+            ->andFilterWhere(['like', 'url', $this->url]);
 
         return $dataProvider;
     }

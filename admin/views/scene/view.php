@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use zc\wechat\models\Wechat;
 
 /* @var $this yii\web\View */
 /* @var $model zc\wechat\models\Scene */
@@ -9,6 +10,11 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Scenes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$app = Wechat::getApplication($model->wechat_id);
+$qrcode = $app->qrcode;
+
+$url = $qrcode->url($model->Ticket);
 ?>
 <div class="scene-view">
 
@@ -27,15 +33,34 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
        'id',
+        [
+            'attribute'=>'wechat_id',
+            'value'=>$model->wechat->name
+        ],
+        [
+            'attribute'=>'url',
+            'format' =>'html',
+            'value'=>Html::img($url,
+                                ['class' => 'img-circle',
+                                    'width' => 150]
+                                )
+        ],
        'name',
        'describtion',
        'subscribeNumber',
-       'type',
-       'expireSeconds',
+        [
+        'attribute'=>'type',
+        'value'=>$model->options['type'][$model->type]
+        ],
+                   'expireSeconds',
        'sceneId',
        'Ticket',
        'TicketTime',
-       'isCreated',
+        [
+        'attribute'=>'isCreated',
+        'value'=>$model->options['isCreated'][$model->isCreated]
+        ],
+                   'url:url',
                        'created_at:datetime',
                                     'updated_at:datetime',
              ],

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use zc\wechat\models\Wechat;
 
 /* @var $this yii\web\View */
 /* @var $searchModel zc\wechat\models\ResponseKeywordSearch */
@@ -9,6 +11,10 @@ use yii\grid\GridView;
 
 $this->title = 'Response Keywords';
 $this->params['breadcrumbs'][] = $this->title;
+?>
+<?php
+$wechats = ArrayHelper::map(Wechat::getOnWechats(), 'id', 'name');
+
 ?>
 <div class="response-keyword-index">
 
@@ -29,7 +35,24 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             ['class' => 'yii\grid\CheckboxColumn', 'options' => ['id' => 'grid','style'=>'overflow-x: scroll']],
            'id',
-           'keyword',
+            [
+                'attribute' => 'wechat_id',
+                'format' => 'html',
+                'value' => function ($model) {
+                    $class = 'label-success';
+                    $class = 'label-warning';
+                    $class = 'label-danger';
+                    $class = 'label-info';
+
+                    return '<span class="label ' . $class . '">' . ($model->wechat->name) . '</span>';
+                },
+                'options' => ['style' => 'width:90px;'],
+                'filter' => Html::activeDropDownList($searchModel,
+                    'wechat_id',$wechats,
+                    ['prompt'=>'全部']
+                ),
+            ],
+            'keyword',
             [
                 'attribute' => 'type',
                 'format' => 'html',

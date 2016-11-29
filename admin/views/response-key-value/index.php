@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
 use zc\wechat\models\ResponseKeyword;
 use zc\wechat\models\ResponseReply;
+use zc\wechat\models\Wechat;
 /* @var $this yii\web\View */
 /* @var $searchModel zc\wechat\models\ResponseKeyValueSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,7 +14,7 @@ $this->title = 'Response Key Values';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php
-
+$wechats = ArrayHelper::map(Wechat::getOnWechats(), 'id', 'name');
 $keyword = ArrayHelper::map(ResponseKeyword::find()->all(), 'id', 'keyword');
 $reply = ArrayHelper::map(ResponseReply::find()->all(), 'id', 'keyword');
 
@@ -40,6 +41,23 @@ $reply = ArrayHelper::map(ResponseReply::find()->all(), 'id', 'keyword');
            //'keyword_id',
            //'reply_id',
 
+            [
+                'attribute' => 'wechat_id',
+                'format' => 'html',
+                'value' => function ($model) {
+                    $class = 'label-success';
+                    $class = 'label-warning';
+                    $class = 'label-danger';
+                    $class = 'label-info';
+
+                    return '<span class="label ' . $class . '">' . ($model->wechat->name) . '</span>';
+                },
+                'options' => ['style' => 'width:90px;'],
+                'filter' => Html::activeDropDownList($searchModel,
+                                    'keyword_id',$wechats,
+                                    ['prompt'=>'全部']
+                                ),
+            ],
             [
                 'attribute' => 'keyword_id',
                 'format' => 'html',

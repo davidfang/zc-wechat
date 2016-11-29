@@ -22,7 +22,7 @@ class ResponseKeyValueSearch extends ResponseKeyValue
     public function rules()
     {
         return [
-            [['id', 'keyword_id', 'reply_id'], 'integer'],
+            [['id','wechat_id', 'keyword_id', 'reply_id'], 'integer'],
             [['created_at'], 'safe'],
         ];
     }

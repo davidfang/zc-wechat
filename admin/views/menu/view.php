@@ -27,14 +27,24 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
        'id',
+        [
+            'attribute'=>'wechat_id',
+            'value'=>$model->wechat->name
+        ],
        'pid',
        'name',
-       'type',
-       'code',
-                       'created_at:datetime',
+        [
+        'attribute'=>'type',
+        'value'=>$model->options['type'][$model->type]
+        ],
+                   'code',
+        [
+        'attribute'=>'status',
+        'value'=>$model->options['status'][$model->status]
+        ],
+                                   'created_at:datetime',
                                     'updated_at:datetime',
-                    'status',
-],
+             ],
     ]) ?>
 
 </div>

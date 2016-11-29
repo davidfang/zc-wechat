@@ -2,15 +2,22 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
+use zc\wechat\models\Wechat;
 
 /* @var $this yii\web\View */
 /* @var $model zc\wechat\models\ResponseReply */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<?php
 
+$wechats = ArrayHelper::map(Wechat::getOnWechats(), 'id', 'name');
+?>
 <div class="response-reply-form">
 
     <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'wechat_id')->dropDownList($wechats, ['prompt' => '请选择']) ?>
 
     <?= $form->field($model, 'keyword')->textInput(['maxlength' => 50]) ?>
 

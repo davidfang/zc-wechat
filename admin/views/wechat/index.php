@@ -165,11 +165,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     'status_d_1' => function ($url, $model, $key) {
                         return $model->status_d == 1 ? '' : Html::button('启用', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:changeStatus('status_d','1','{$model->id}');"]);
                     },
+                    'generatorMenu' => function ($url, $model, $key) {
+                        return $model->status_d == 1 ?  Html::button('生成菜单', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:generatorMenu('generatorMenu','1','{$model->id}');"]):'';
+                    },
                ],
-                'template' => '{status_d_0} {status_d_1}  {view} {update}{delete} ',
+                'template' => '{status_d_0} {status_d_1} {generatorMenu}  {view} {update}{delete} ',
             ]
         ],
     ]);
     ?>
     </div>
 </div>
+    <script type="text/javascript">
+        <?php $this->beginBlock('generatorMenu') ?>
+        var data = new Object();  //对象
+        function generatorMenu(f, v, id) {
+            var data = {id:id}
+            var url = '<?= Yii::$app->urlManager->createUrl('/wechat/menu/generator') ?>';
+            $.ajax({
+                url: url,
+                type: 'get',//必须使用,不知道为什么
+                dataType: 'json',
+                data: data,
+                success: function (data) {
+                    alert(data.msg);
+                    console.log(data);
+                    //location.reload();
+                }
+            })
+        }
+
+        <?php $this->endBlock() ?>
+    </script>
+<?php $this->registerJs($this->blocks['generatorMenu'], \yii\web\View::POS_END) ?>

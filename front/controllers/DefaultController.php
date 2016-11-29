@@ -10,7 +10,6 @@ use EasyWeChat\Message\Video;
 use EasyWeChat\Message\Voice;
 use yii\base\ErrorException;
 use yii\rest\Controller;
-use EasyWeChat\Foundation\Application;
 use zc\wechat\models\Wechat;
 
 /**
@@ -18,6 +17,7 @@ use zc\wechat\models\Wechat;
  */
 class DefaultController extends Controller
 {
+    public $wechatId;//请求微信ID
     /**
      * Renders the index view for the module
      * @param $id
@@ -25,28 +25,10 @@ class DefaultController extends Controller
      */
     public function actionIndex($id)
     {
-
-        $options = [
-            /**
-             * 账号基本信息，请从微信公众平台/开放平台获取
-             */
-            'app_id'  => '',         // AppID
-            'secret'  => '',     // AppSecret
-            'token'   => '',          // Token
-            'aes_key' => '',                    // EncodingAESKey，安全模式下请一定要填写！！！
-
-            // ...
-        ];
-        $wechat = Wechat::find(['id'=>$id])->one();
+        $this->wechatId = $id;
 
 
-
-        $options['app_id'] = $wechat->appID;
-        $options['secret'] = $wechat->secret;
-        $options['token'] = $wechat->token;
-        $options['aes_key'] = $wechat->encoding_aes_key;
-
-        $app = new Application($options);
+        $app = Wechat::getApplication($id);
 
         // 从项目实例中得到服务端应用实例。
         $server = $app->server;

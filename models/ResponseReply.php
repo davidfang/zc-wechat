@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
  * "wx_response_reply"表的model
  *
  * @property string $id
+ * @property integer $wechat_id
  * @property string $keyword
  * @property string $type
  * @property string $title
@@ -25,7 +26,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string $MediaId
  * @property integer $priority
  * @property integer $show_times
- * @property string $created_at
+ * @property integer $created_at
  */
 class ResponseReply extends \yii\db\ActiveRecord
 {
@@ -62,10 +63,10 @@ class ResponseReply extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['keyword', 'title'], 'required'],
+            [['wechat_id', 'keyword', 'title'], 'required'],
             [['type'], 'string'],
             [['banner', 'icon', 'picture', 'created_at'], 'safe'],
-            [['priority', 'show_times'], 'integer'],
+            [['wechat_id', 'priority', 'show_times'], 'integer'],
             [['keyword'], 'string', 'max' => 50],
             [['title', 'url', 'MediaId'], 'string', 'max' => 100],
             [['description'], 'string', 'max' => 10000],
@@ -122,6 +123,7 @@ class ResponseReply extends \yii\db\ActiveRecord
     {
         return [
             'id',// 'ID',
+            'wechat_id',// '微信公众号ID（数据库）',
             'keyword',// '关键词',
             'type',// '回复类型',
             'title',// '标题(图文)',
@@ -152,6 +154,7 @@ class ResponseReply extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'wechat_id' => '微信公众号ID（数据库）',
             'keyword' => '关键词',
             'type' => '回复类型',
             'title' => '标题(图文)',
@@ -250,5 +253,13 @@ class ResponseReply extends \yii\db\ActiveRecord
             ],
         ];
     }
-
+    /**
+     * 获取微信号
+     * 取的时候使用
+     * $wechat = models\Wechat::findOne(1);
+     * $wechatName = $wechat->name;
+     */
+    public function getWechat(){
+        return $this->hasOne(Wechat::className(),['id'=>'wechat_id']);//->asArray();
+    }
 }

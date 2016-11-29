@@ -22,13 +22,15 @@ use zc\gii\bs3activeform\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
+    <?= $form->field($model, 'wechat_id') ?>
+
     <?= $form->field($model, 'name') ?>
 
     <?= $form->field($model, 'describtion') ?>
 
     <?= $form->field($model, 'subscribeNumber') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?php // echo $form->field($model, 'type')->dropDownList($model->options['type'], ['prompt' => '请选择']) ?>
 
     <?php // echo $form->field($model, 'expireSeconds') ?>
 
@@ -38,7 +40,7 @@ use zc\gii\bs3activeform\ActiveForm;
 
     <?php // echo $form->field($model, 'TicketTime') ?>
 
-    <?php // echo $form->field($model, 'isCreated') ?>
+    <?php // echo $form->field($model, 'isCreated')->dropDownList($model->options['isCreated'], ['prompt' => '请选择']) ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
 

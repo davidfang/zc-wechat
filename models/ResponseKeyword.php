@@ -8,11 +8,12 @@ use yii\behaviors\TimestampBehavior;
  * "wx_response_keyword"表的model
  *
  * @property integer $id
+ * @property integer $wechat_id
  * @property string $keyword
  * @property string $type
  * @property integer $priority
  * @property integer $times
- * @property string $created_at
+ * @property integer $created_at
  */
 class ResponseKeyword extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,7 @@ class ResponseKeyword extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['keyword'], 'required'],
+            [['wechat_id','keyword'], 'required'],
             [['type'], 'string'],
             [['priority', 'times'], 'integer'],
             [['created_at'], 'safe'],
@@ -61,6 +62,7 @@ class ResponseKeyword extends \yii\db\ActiveRecord
     {
         return [
             'id',// 'ID',
+            'wechat_id',// '微信公众号ID（数据库）',
             'keyword',// '关键词',
             'type',// '回复类型',
             'priority',// '优先级',
@@ -76,6 +78,7 @@ class ResponseKeyword extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'wechat_id' => '微信公众号ID（数据库）',
             'keyword' => '关键词',
             'type' => '回复类型',
             'priority' => '优先级',
@@ -158,6 +161,15 @@ class ResponseKeyword extends \yii\db\ActiveRecord
                 'field_value'=>'news'
             ],
             ];
+    }
+    /**
+     * 获取微信号
+     * 取的时候使用
+     * $wechat = models\Wechat::findOne(1);
+     * $wechatName = $wechat->name;
+     */
+    public function getWechat(){
+        return $this->hasOne(Wechat::className(),['id'=>'wechat_id']);//->asArray();
     }
     /**
      * 获取关键词对应的回复值

@@ -5,12 +5,14 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use zc\wechat\models\ResponseKeyword;
 use zc\wechat\models\ResponseReply;
+use zc\wechat\models\Wechat;
 /* @var $this yii\web\View */
 /* @var $model zc\wechat\models\ResponseKeyValue */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <?php
 
+    $wechats = ArrayHelper::map(Wechat::getOnWechats(), 'id', 'name');
     $keyword = ArrayHelper::map(ResponseKeyword::find()->all(), 'id', 'keyword');
     $responseReplyAll = ResponseReply::find()->all();
     $replyKey = ArrayHelper::getColumn($responseReplyAll, 'id');
@@ -24,6 +26,8 @@ use zc\wechat\models\ResponseReply;
 <div class="response-key-value-form">
 
     <?php $form = ActiveForm::begin(); ?>
+
+    <?= $form->field($model, 'wechat_id')->dropDownList($wechats, ['prompt' => '请选择']) ?>
 
     <?= $form->field($model, 'keyword_id')->dropDownList($keyword, ['prompt' => '请选择']) ?>
 

@@ -22,7 +22,7 @@ class ResponseKeywordSearch extends ResponseKeyword
     public function rules()
     {
         return [
-            [['id', 'priority', 'times'], 'integer'],
+            [['id','wechat_id', 'priority', 'times'], 'integer'],
             [['keyword', 'type', 'created_at'], 'safe'],
         ];
     }
@@ -60,6 +60,7 @@ class ResponseKeywordSearch extends ResponseKeyword
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'wechat_id' => $this->wechat_id,
             'priority' => $this->priority,
             'times' => $this->times,
             'created_at' => $this->created_at,

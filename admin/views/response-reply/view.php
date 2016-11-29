@@ -27,6 +27,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
        'id',
+        [
+            'attribute'=>'wechat_id',
+            'value'=>$model->wechat->name
+        ],
        'keyword',
         [
         'attribute'=>'type',

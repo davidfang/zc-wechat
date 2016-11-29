@@ -3,7 +3,7 @@
 * Menu搜索模型
 * Created by David
 * User: David.Fang
-* Date: 2016-11-21* Time: 19:35:15*/
+* Date: 2016-11-28* Time: 18:51:48*/
 namespace zc\wechat\models;
 
 use Yii;
@@ -22,7 +22,7 @@ class MenuSearch extends Menu
     public function rules()
     {
         return [
-            [['id', 'pid', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'wechat_id', 'pid', 'created_at', 'updated_at'], 'integer'],
             [['name', 'type', 'code', 'status'], 'safe'],
         ];
     }
@@ -60,6 +60,7 @@ class MenuSearch extends Menu
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'wechat_id' => $this->wechat_id,
             'pid' => $this->pid,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

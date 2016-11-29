@@ -22,7 +22,7 @@ class ResponseReplySearch extends ResponseReply
     public function rules()
     {
         return [
-            [['id', 'priority', 'show_times'], 'integer'],
+            [['id','wechat_id', 'priority', 'show_times'], 'integer'],
             [['keyword', 'type', 'title', 'url', 'description', 'img_banner', 'img_icon', 'musicurl', 'hqmusicurl', 'ThumbMediaId', 'voice', 'video', 'img_picture', 'MediaId', 'created_at'], 'safe'],
         ];
     }
@@ -60,6 +60,7 @@ class ResponseReplySearch extends ResponseReply
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'wechat_id' => $this->wechat_id,
             'priority' => $this->priority,
             'show_times' => $this->show_times,
             'created_at' => $this->created_at,

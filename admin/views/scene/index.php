@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use zc\wechat\models\Wechat;
 
 /* @var $this yii\web\View */
 /* @var $searchModel zc\wechat\models\SceneSearch */
@@ -9,6 +11,10 @@ use yii\grid\GridView;
 
 $this->title = 'Scenes';
 $this->params['breadcrumbs'][] = $this->title;
+?>
+<?php
+$wechats = ArrayHelper::map(Wechat::getOnWechats(), 'id', 'name');
+
 ?>
 <div class="scene-index">
 
@@ -29,11 +35,54 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             ['class' => 'yii\grid\CheckboxColumn', 'options' => ['id' => 'grid','style'=>'overflow-x: scroll']],
            'id',
+            [
+                'attribute' => 'wechat_id',
+                'format' => 'html',
+                'value' => function ($model) {
+                    $class = 'label-success';
+                    $class = 'label-warning';
+                    $class = 'label-danger';
+                    $class = 'label-info';
+
+                    return '<span class="label ' . $class . '">' . ($model->wechat->name) . '</span>';
+                },
+                'options' => ['style' => 'width:90px;'],
+                'filter' => Html::activeDropDownList($searchModel,
+                    'wechat_id',$wechats,
+                    ['prompt'=>'全部']
+                ),
+            ],
+            [
+                'label'=>'封面图',
+                'format'=>'raw',
+                'value'=>function($model){
+                    $app = Wechat::getApplication($model->wechat_id);
+                    $qrcode = $app->qrcode;
+
+                    $url = $qrcode->url($model->Ticket);
+                    return Html::img($url,
+                        ['class' => 'img-circle',
+                            'width' => 90]
+                    );
+                }
+            ],
            'name',
            'describtion',
            'subscribeNumber',
-           'type',
-           //'expireSeconds',
+ [
+                'attribute' => 'type',
+                'format' => 'html',
+                'value' => function ($model) {
+                    $class = 'label-success';
+                    $class = 'label-warning';
+                    $class = 'label-danger';
+                    $class = 'label-info';
+                    return '<span class="label ' . $class . '">' . ($model->options['type'][$model->type]) . '</span>';
+                },
+                'options' => ['style' => 'width:90px;'],
+                'filter' => $searchModel->options['type'],
+            ],
+                       //'expireSeconds',
            //'sceneId',
            //'Ticket',
 [
@@ -52,8 +101,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'options' => ['style' => 'width:200px;'],
 
             ],
-                       //'isCreated',
-[
+             [
+                'attribute' => 'isCreated',
+                'format' => 'html',
+                'value' => function ($model) {
+                    $class = 'label-success';
+                    $class = 'label-warning';
+                    $class = 'label-danger';
+                    $class = 'label-info';
+                    return '<span class="label ' . $class . '">' . ($model->options['isCreated'][$model->isCreated]) . '</span>';
+                },
+                'options' => ['style' => 'width:90px;'],
+                'filter' => $searchModel->options['isCreated'],
+            ],
+            [
                 'attribute' => 'created_at',
                 'format' => 'html',
                 'value' => function ($model) {
@@ -89,8 +150,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '操作',
                 'buttons' => [
+                    'type_1' => function ($url, $model, $key) {
+                        return $model->type == '1' ? '' : Html::button('临时', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:changeStatus('type','1','{$model->id}');"]);
+                    },
+                    'type_2' => function ($url, $model, $key) {
+                        return $model->type == '2' ? '' : Html::button('永久', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:changeStatus('type','2','{$model->id}');"]);
+                    },
+                    'isCreated_1' => function ($url, $model, $key) {
+                        return $model->isCreated == '1' ? '' : Html::button('生成', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:changeStatus('isCreated','1','{$model->id}');"]);
+                    },
+                    'isCreated_0' => function ($url, $model, $key) {
+                        return $model->isCreated == '0' ? '' : Html::button('未生成', ['class' => 'btn btn-primary btn-sm', 'onclick' => "javascript:changeStatus('isCreated','0','{$model->id}');"]);
+                    },
                ],
-                'template' => ' {view} {update}{delete} ',
+                'template' => '{isCreated_1}   {view} {update}{delete} ',
             ]
         ],
     ]);
