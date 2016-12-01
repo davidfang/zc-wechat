@@ -25,20 +25,31 @@ class AuthController extends Controller
 
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
-        Yii::$app->session->set('wechat_user',$user->toArray());
+        Yii::$app->session->set('wechatUser',$user->toArray());
 
         $targetUrl = Yii::$app->request->get('callback','/');
+        if (strpos($targetUrl, '?') === false) {
+            $targetUrl .= '?wechatInfo=' . urlencode(json_encode($user->toArray()));
+        } else {
+            $targetUrl .= '&wechatInfo=' . urlencode(json_encode($user->toArray()));
+        }
         Yii::$app->response->redirect($targetUrl);
     }
 
     /**
+     * 基本授权调用示例
+     *   1. 直接访问页面自身 例：`http://fronted.example.com/wechat/1/snsapi_userinfo/test`
+     *  2. 访问A页面授权完跳转到B页面 例：`http://fronted.example.com/wechat/1/snsapi_userinfo/test?callback=/wechat/auth/test2`
+     *  可以验证会话模式为：session和get,get时每次都去微信服务器授权
      * @param $id
      * @param $scope
      */
     public function actionTest($id,$scope){
         $session = Yii::$app->session;
+        $wechatInfo = Yii::$app->request->get('wechatInfo');
         // 未登录
-        if(! $session->has('wechat_user')){
+        //if(! $session->has('wechatUser')){//session方式验证
+        if($wechatInfo == null){//get方式验证
             $callback = \Yii::$app->request->get('callback',$_SERVER['REQUEST_URI']);//回跳地址
             Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/test");
             $app = Wechat::getOauthApplication($id,$scope,"/wechat/{$id}/{$scope}/callback?callback=".urlencode($callback));
@@ -46,14 +57,52 @@ class AuthController extends Controller
             $oauth->redirect()->send();
         }
         // 已经登录过
-        $user = $session->get('wechat_user');
+        $user = $session->get('wechatUser');
         echo 'Test1<br>';
         echo '<pre>';
         var_dump($user);
+        echo '--------------------<br>';
+        var_dump($wechatInfo);
     }
+    /**
+     * 为静态页面授权获得微信信息，信息存储到localStorage.setItem('wechatInfo')
+     * @param $id
+     * @param $scope
+     */
+    public function actionTest1($id,$scope){
+        $session = Yii::$app->session;
+        $wechatInfo = Yii::$app->request->get('wechatInfo');
+        // 未登录
+        //if(! $session->has('wechatUser')){
+        if($wechatInfo == null){
+            $callback = \Yii::$app->request->get('callback',$_SERVER['REQUEST_URI']);//回跳地址
+            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/test");
+            $app = Wechat::getOauthApplication($id,$scope,"/wechat/{$id}/{$scope}/callback?callback=".urlencode($callback));
+            $oauth = $app->oauth;
+            $oauth->redirect()->send();
+        }
+        // 已经登录过
+        $user = $session->get('wechatUser');
+        echo 'Test1<br>';
+        echo '<pre>';
+        var_dump($user);
+        echo '--------------------<br>';
+        var_dump($wechatInfo);
+        echo  <<<doc
+<script type="application/javascript">
+        var openId = localStorage.setItem('openId','$wechatInfo');
+        //document.getElementById("openId").innerHTML = openId;
+        location.href = "/index.html";//JS跳转到静态页面的地址
+    </script>
+doc;
+    }
+
+    /**
+     * 在test页面授权后跳转到test2页面
+     */
     public function actionTest2(){
         $session = Yii::$app->session;
-        $user = $session->get('wechat_user');
+        $user = $session->get('wechatUser');
         echo 'test2<br>';
         echo '<pre>';
         var_dump($user);
