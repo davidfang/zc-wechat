@@ -259,4 +259,28 @@ class Wechat extends \yii\db\ActiveRecord
         return  new Application($options);
 
     }
+    /**
+     * 获取微信授权实例
+     * @param $id
+     * @param $scope  snsapi_base / snsapi_userinfo
+     * @param $callback 回跳地址 默认回跳到授权页面
+     * @return \EasyWeChat\Foundation\Application
+     */
+    static public function getOauthApplication($id,$scope,$callback){
+        $wechat = self::find()->where(['id'=>$id])->one();
+        //$callback = \Yii::$app->get('redirect',$_SERVER['REQUEST_URI']);
+
+
+        $options['app_id'] = $wechat->appID;
+        $options['secret'] = $wechat->secret;
+        $options['token'] = $wechat->token;
+        $options['aes_key'] = $wechat->encoding_aes_key;
+        $options['oauth'] = [
+                            'scopes'   => [$scope],
+                            //'callback' => "/wechat/{$id}/{$scope}/callback",
+                            'callback' => $callback,
+                        ];
+        return  new Application($options);
+
+    }
 }

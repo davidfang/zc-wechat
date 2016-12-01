@@ -37,9 +37,10 @@ class EventScan extends \yii\db\ActiveRecord
             [['ToUserName', 'FromUserName', 'CreateTime', 'MsgType', 'Event', 'EventKey', 'Ticket'], 'required'],
             [['CreateTime'], 'integer'],
             [['created_at'], 'safe'],
-            [['ToUserName', 'FromUserName', 'Ticket'], 'string', 'max' => 50],
+            [['ToUserName', 'FromUserName' ], 'string', 'max' => 50],
             [['MsgType'], 'string', 'max' => 10],
             [['Event'], 'string', 'max' => 15],
+            [['Ticket'], 'string', 'max' => 255],
             [['EventKey'], 'string', 'max' => 100]
         ];
     }

@@ -62,31 +62,21 @@ class ImageBehavior extends Behavior
 
             // ...
         ];
-        $id = 1;
-        $wechat = Wechat::find(['id'=>$id])->one();
+        if($this->owner->img_banner != '') {
+            $app = Wechat::getApplication($this->owner->wechat_id);
+            if ($this->isTem) {
+                // 临时素材
+                $material = $app->material_temporary;
+            } else {
+                // 永久素材
+                $material = $app->material;
+            }
+            $realPath = Yii::getAlias($this->sourcePath . $this->owner->img_banner);
+            $result = $material->uploadImage($realPath);//微信素材  上传图片
 
 
-
-        $options['app_id'] = $wechat->appID;
-        $options['secret'] = $wechat->secret;
-        $options['token'] = $wechat->token;
-        $options['aes_key'] = $wechat->encoding_aes_key;
-
-
-        $app = new Application($options);
-        if($this->isTem){
-            // 临时素材
-            $material = $app->material_temporary;
-        }else{
-            // 永久素材
-            $material = $app->material;
+            $this->owner->MediaId = $result['media_id'];//MediaId赋值
         }
-        $realPath = Yii::getAlias($this->sourcePath . $this->owner->img_banner);
-        $result = $material->uploadImage($realPath);//微信素材  上传图片
-
-
-
-        $this->owner->MediaId = $result['media_id'];//MediaId赋值
     }
 
 }

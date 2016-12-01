@@ -54,24 +54,28 @@ class DefaultController extends Controller
 //关注
                         case 'subscribe':
                             //$return .= "欢迎关注...";
-                            //二维码关注
-                            if(isset($message->eventkey) && isset($message->ticket)){
+
+                            $request['MsgType'] = $message->MsgType;//  event    消息类型
+                            $request['Event'] = $message->Event;//    subscribe    关注
+
+                            if(isset($message->EventKey) && isset($message->Ticket)){//二维码关注
                                 $request['EventKey'] = $message->EventKey;//  event    消息类型
                                 $request['Ticket'] = $message->Ticket;//    subscribe    关注
                                 //$return .= "二维码关注...";
                                 $return .= "扫码首访欢迎语";
+                                $write_log_model = new \zc\wechat\models\EventScan();
+
                             }else{//普通关注
 
                                 //$return .= "普通关注...";
                                 $return .= "关注首访欢迎语";
+                                $write_log_model = new \zc\wechat\models\EventSubscribe();
                             }
                              //普通关注
                                // $return .= '普通关注';
                             //关注
-                            $write_log_model = new \zc\wechat\models\EventSubscribe();
 
-                            $request['MsgType'] = $message->MsgType;//  event    消息类型
-                            $request['Event'] = $message->Event;//    subscribe    关注
+
 
                             break;
 
@@ -119,7 +123,7 @@ class DefaultController extends Controller
 
                             $request['MsgType'] = $message->MsgType;//  event    消息类型
                             $request['Event'] = $message->Event;//    SCAN    关注
-                            $request['Eventkey'] = $message->Eventkey;//事件KEY值，是一个32位无符号整数，即创建二维码时的二维码scene_id
+                            $request['EventKey'] = $message->EventKey;//事件KEY值，是一个32位无符号整数，即创建二维码时的二维码scene_id
                             $request['Ticket'] = $message->Ticket;//二维码的ticket，可用来换取二维码图片
 
                             break;
@@ -374,10 +378,18 @@ class DefaultController extends Controller
                     $write_log_model->load($request, '');
                     $write_log_model->save();//保存日志
                     if ($write_log_model->hasErrors()) {
-                        $t = '数据存储错误：';
+                        $t = '数据存储错误：' . get_class($write_log_model);
                         /*foreach ($write_log_model->getErrors() as $k => $item) {
                             $t .= $k . $item;
                         };*/
+                        $array=[];
+                        foreach ($message as $k => $v) {
+                            $array[$k] = $v;
+                        }
+                        $t .= json_encode($array,JSON_UNESCAPED_UNICODE);
+                        $t .= '请求数据信息：';
+                        $t .= json_encode($request,JSON_UNESCAPED_UNICODE);
+                        $t .= '报错信息：';
                         $t .= json_encode($write_log_model->getErrors(), JSON_UNESCAPED_UNICODE);
                         return $t;
                     }
@@ -482,5 +494,40 @@ class DefaultController extends Controller
             }
 
         }
+    }
+
+    /**
+     * 授权回调页面
+     * @param $id
+     * @param $scope Scopes: snsapi_base 与 snsapi_userinfo
+     */
+    public function actionOauthCallback($id,$scope)
+    {
+        $app = Wechat::getOauthApplication($id,$scope);
+        $oauth = $app->oauth;
+
+        // 获取 OAuth 授权结果用户信息
+        $user = $oauth->user();
+        Yii::$app->session->set('wechat_user',$user->toArray());
+        //$_SESSION['wechat_user'] = $user->toArray();
+
+        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+        //header('location:'. $targetUrl); // 跳转到 user/profile
+        Yii::$app->response->redirect($targetUrl);
+    }
+
+    public function actionOauthTest($id,$scope){
+        echo 'aaaa';return ;
+        $session = Yii::$app->session;
+        // 未登录
+        if(! $session->has('wechat_user')){
+            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/oauth-test");
+            $app = Wechat::getOauthApplication($id,$scope);
+            $oauth = $app->oauth;
+            $oauth->redirect()->send();
+        }
+        // 已经登录过
+        $user = $_SESSION['wechat_user'];
+        var_dump($user);
     }
 }

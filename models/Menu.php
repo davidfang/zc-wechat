@@ -215,14 +215,7 @@ class Menu extends \yii\db\ActiveRecord
     public static function getAllParents(){
         $result = self::find()->orderBy('pid')->all();
         $return = ArrayHelper::map($result,'id','name','pid');
-       return [0=>'顶级'] + $return;
-        if($group){
-            return ArrayHelper::map($result,'id','name','pid');
-        }else{
-            $return = ArrayHelper::map($result,'id','name');
-            //array_unshift($return,'顶级');
-            return [0=>'顶级'] + $return;
-        }
+        return array_merge(['0'=>'顶级'],$return);
     }
 
     /**

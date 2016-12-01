@@ -33,9 +33,9 @@ $this->params['breadcrumbs'][] = $this->title;
            'FromUserName',
            'CreateTime:datetime',
            'MsgType',
-           //'Event',
-           //'EventKey',
-           //'Ticket',
+           'Event',
+           'EventKey',
+           'Ticket',
 [
                 'attribute' => 'created_at',
                 'format' => 'html',
