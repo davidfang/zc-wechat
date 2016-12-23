@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
-        Yii::$app->session->set('wechatUser',$user->toArray());
+        Yii::$app->session->set('wechatUser_'.$scope,$user->toArray());
 
         $targetUrl = Yii::$app->request->get('callback','/');
         if (strpos($targetUrl, '?') === false) {
@@ -44,21 +44,21 @@ class AuthController extends Controller
      * @param $id
      * @param $scope
      */
-    public function actionTest($id,$scope){
+    public function actionPhp($id,$scope){
         $session = Yii::$app->session;
         $wechatInfo = Yii::$app->request->get('wechatInfo');
         // 未登录
-        //if(! $session->has('wechatUser')){//session方式验证
+        //if(! $session->has('wechatUser_'.$scope)){//session方式验证
         if($wechatInfo == null){//get方式验证
             $callback = \Yii::$app->request->get('callback',$_SERVER['REQUEST_URI']);//回跳地址
-            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/test");
+            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/php");
             $app = Wechat::getOauthApplication($id,$scope,"/wechat/{$id}/{$scope}/callback?callback=".urlencode($callback));
             $oauth = $app->oauth;
             $oauth->redirect()->send();
         }
         // 已经登录过
-        $user = $session->get('wechatUser');
-        echo 'Test1<br>';
+        $user = $session->get('wechatUser_'.$scope);
+        echo 'actionTest var_dump<br>';
         echo '<pre>';
         var_dump($user);
         echo '--------------------<br>';
@@ -69,21 +69,21 @@ class AuthController extends Controller
      * @param $id
      * @param $scope
      */
-    public function actionTest1($id,$scope){
+    public function actionJs($id,$scope){
         $session = Yii::$app->session;
         $wechatInfo = Yii::$app->request->get('wechatInfo');
         // 未登录
-        //if(! $session->has('wechatUser')){
+        //if(! $session->has('wechatUser_'.$scope)){
         if($wechatInfo == null){
             $callback = \Yii::$app->request->get('callback',$_SERVER['REQUEST_URI']);//回跳地址
-            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/test");
+            Yii::$app->session->set('target_url',"/wechat/{$id}/{$scope}/js");
             $app = Wechat::getOauthApplication($id,$scope,"/wechat/{$id}/{$scope}/callback?callback=".urlencode($callback));
             $oauth = $app->oauth;
             $oauth->redirect()->send();
         }
         // 已经登录过
-        $user = $session->get('wechatUser');
-        echo 'Test1<br>';
+        $user = $session->get('wechatUser_'.$scope);
+        echo 'actionTest1 var_dump <br>';
         echo '<pre>';
         var_dump($user);
         echo '--------------------<br>';
@@ -102,8 +102,8 @@ doc;
      */
     public function actionTest2(){
         $session = Yii::$app->session;
-        $user = $session->get('wechatUser');
-        echo 'test2<br>';
+        $user = $session->get('wechatUser_snsapi_userinfo');
+        echo 'action test2 var_dump<br>';
         echo '<pre>';
         var_dump($user);
     }
